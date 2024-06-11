@@ -1,0 +1,239 @@
+---
+author: "Jeremy"
+date: "5/10/2021"
+output: html_document
+---
+
+library
+```{r}
+install.packages("dplyr")
+```
+
+
+Import table
+
+```{r pressure, echo=FALSE}
+library(dplyr)
+data <- read.table("Data_TP1.csv", sep=";", dec=",", header=TRUE)
+str(data)
+```
+
+```{r}
+str(data)
+```
+dimension
+
+```{r}
+dim(data)
+data[5:7,]
+```
+\
+display columns
+
+```{r}
+data[,2]
+```
+
+ejercicio1
+
+```{r}
+data[5:15,]
+```
+
+
+```{r}
+data[c(2,12,45),]
+```
+
+```{r}
+data <- data[,-1]
+```
+
+change variable type
+
+to factor
+
+```{r}
+data.0$PTL <- as.factor(data.0$PTL)
+```
+
+to boolean
+```{r}
+data$SMOKE_C<-ifelse(data$SMOKE == 1, "YES", "NO")
+```
+
+To yes/no factor
+```{r}
+data$SMOKE_C <- as.factor(data$SMOKE_C)
+str(data)
+```
+
+
+
+Practica
+
+High blood pressure
+```{r}
+data$HT_C<-ifelse(data$HT == 1, "YES", "NO")
+data$HT_C <- as.factor(data$HT_C)
+str(data)
+```
+
+
+Uterine irritability
+```{r}
+data$UI_C<-ifelse(data$UI == 1, "YES", "NO")
+data$UI_C <- as.factor(data$UI_C)
+str(data)
+```
+
+Number of medical visits
+```{r}
+data$FVT <- as.factor(data$FVT)
+```
+
+
+Building of new variables
+
+```{r}
+data$LWT_2 <- data$LWT * 0.45359237
+data$BMI <- data$LWT_2/(data$HEIGHT/100)^2
+head(data)
+```
+
+
+
+```{r}
+data$BMI_C[data$BMI < 16.5] <- "Severe thinness"
+data$BMI_C[data$BMI >= 16.5 & data$BMI < 18.5] <- "Underweight"
+data$BMI_C[data$BMI >= 18.5 & data$BMI < 25] <- "Normal range"
+data$BMI_C[data$BMI >= 25 & data$BMI < 30] <- "Overweight"
+data$BMI_C[data$BMI >= 30 & data$BMI < 35] <- "Moderate Obese"
+data$BMI_C[data$BMI >= 35 & data$BMI < 40] <- "Severe Obese"
+data$BMI_C[data$BMI > 40] <- "Obese class III"
+head(data)
+```
+
+as factor
+```{r}
+data$BMI_C <- factor(data$BMI_C, c("Severe thinness", "Underweight", "Normal range", "Overweight", "Moderate Obese", "Severe Obese", "Obese class III"))
+levels(data$BMI_C)
+str(data)
+```
+
+
+NA elements
+```{r}
+na.row <- apply(data, 1, function(x){
+  sum(is.na(x)) >0
+})
+na.row
+```
+
+```{r}
+data.bis <- data[!na.row,]
+dim(data)
+dim(data.bis)
+```
+
+
+Exportar la tabla
+```{r}
+write.table(data.bis, "fic_travail.cvs", sep=";", dec=",", row.names = FALSE)
+```
+
+pie chart
+
+```{r}
+pie(table(data.bis$SMOKE), labels = c("Non smoker", "Smoker"), col = c("forestgreen", "red"), main = "Pie chart of smoke")
+```
+
+```{r}
+pie(table(data.bis$SMOKE), labels = c("Non smoker ++", "Smoker"), col = c("blue", "red", main = "Pie chart of smoke"))
+```
+
+```{r}
+
+table(data.bis$SMOKE)
+```
+```{r}
+summary(data.bis$SMOKE)
+```
+
+ROUND
+```{r}
+round(100 * table(data.bis$SMOKE)/sum(table(data.bis$SMOKE)), +2)
+```
+
+```{r}
+round(100 * table(data.bis$SMOKE)/sum(table(data.bis$SMOKE)), +1)
+```
+
+```{r}
+res.prop <- round(100 * table(data.bis$SMOKE)/sum(table(data.bis$SMOKE)), +2)
+lab <- c(paste("Non smoker (",
+               res.prop[1], "%)", sep = ""),
+         paste("Smoker (", res.prop[2],
+               "%)", sep = ""))
+pie(table(data.bis$SMOKE), labels = lab,
+    col = c("forestgreen", "red"),
+    main = "Pie chart of SMOKE")
+```
+
+bar plot
+```{r}
+barplot(table(data.bis$PTL),
+        names.arg = c("None", "1", 
+                      "2", "3"), col = c("forest green",
+                                         "yellow", "orange", "red"),
+        xlab = "Number of previous premature births",
+        ylab = "Absolute frequencies",
+        main = "Bar chart of previous premature births ")
+```
+
+
+```{r}
+table(data.bis$PTL)
+summary(data.bis$PTL)
+round(100 * table(data.bis$PTL)/sum(table(data.bis$PTL)), +2)
+```
+
+```{r}
+PTL.prop <- round(100 * table(data.bis$PTL)/sum(table(data.bis$PTL)), +2)
+lab1 <- c(paste("0 (",
+               PTL.prop[1], "%)", sep = ""),
+         paste("1 (", res.prop[2],
+               "%)", sep = ""),
+         paste("2 (", res.prop[3],
+               "%)", sep = ""),
+         paste("3 (", res.prop[4],
+               "%)", sep = ""))
+barplot(table(data.bis$PTL),
+        names.arg = lab1,
+        col = c("forest green", "yellow", "orange", "red"),
+        xlab = "Number of previous premature births",
+        ylab = "Absolute frequencies",
+        main = "Bar chart of previous premature births ")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
